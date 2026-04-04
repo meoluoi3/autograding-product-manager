@@ -1,0 +1,95 @@
+name: GitHub Classroom Workflow
+
+on:
+  push:
+    branches: ["**"]
+
+permissions:
+  checks: write
+  actions: read
+  contents: read
+
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Test case 1
+        id: test_case_1
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: Test case 1
+          setup-command: ""
+          command: bash grading/run_test.sh file_exists
+          timeout: 10
+          max-score: 5
+
+      - name: Test case 2
+        id: test_case_2
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: Test case 2
+          setup-command: ""
+          command: bash grading/run_test.sh basic_structure
+          timeout: 10
+          max-score: 10
+
+      - name: Test case 3
+        id: test_case_3
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: Test case 3
+          setup-command: ""
+          command: bash grading/run_test.sh ui_elements
+          timeout: 10
+          max-score: 15
+
+      - name: Test case 4
+        id: test_case_4
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: Test case 4
+          setup-command: ""
+          command: bash grading/run_test.sh data_loaded
+          timeout: 30
+          max-score: 25
+
+      - name: Test case 5
+        id: test_case_5
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: Test case 5
+          setup-command: ""
+          command: bash grading/run_test.sh table_sort
+          timeout: 30
+          max-score: 20
+
+      - name: Test case 6
+        id: test_case_6
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: Test case 6
+          setup-command: ""
+          command: bash grading/run_test.sh form_add
+          timeout: 30
+          max-score: 25
+
+      - name: Autograding Reporter
+        uses: classroom-resources/autograding-grading-reporter@v1
+        env:
+          TEST_CASE_1_RESULTS: "${{steps.test_case_1.outputs.result}}"
+          TEST_CASE_2_RESULTS: "${{steps.test_case_2.outputs.result}}"
+          TEST_CASE_3_RESULTS: "${{steps.test_case_3.outputs.result}}"
+          TEST_CASE_4_RESULTS: "${{steps.test_case_4.outputs.result}}"
+          TEST_CASE_5_RESULTS: "${{steps.test_case_5.outputs.result}}"
+          TEST_CASE_6_RESULTS: "${{steps.test_case_6.outputs.result}}"
+        with:
+          runners: test_case_1,test_case_2,test_case_3,test_case_4,test_case_5,test_case_6

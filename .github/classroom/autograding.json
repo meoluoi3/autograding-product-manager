@@ -1,0 +1,64 @@
+{
+  "tests": [
+    {
+      "name": "Test case 1",
+      "setup": "",
+      "run": "bash grading/run_test.sh file_exists",
+      "input": "",
+      "output": "[PASS]",
+      "comparison": "included",
+      "timeout": 10,
+      "points": 5
+    },
+    {
+      "name": "Test case 2",
+      "setup": "",
+      "run": "bash grading/run_test.sh basic_structure",
+      "input": "",
+      "output": "[PASS]",
+      "comparison": "included",
+      "timeout": 10,
+      "points": 10
+    },
+    {
+      "name": "Test case 3",
+      "setup": "",
+      "run": "bash grading/run_test.sh ui_elements",
+      "input": "",
+      "output": "[PASS]",
+      "comparison": "included",
+      "timeout": 10,
+      "points": 15
+    },
+    {
+      "name": "Test case 4",
+      "setup": "",
+      "run": "bash grading/run_test.sh data_loaded",
+      "input": "",
+      "output": "[PASS]",
+      "comparison": "included",
+      "timeout": 30,
+      "points": 25
+    },
+    {
+      "name": "Test case 5",
+      "setup": "",
+      "run": "bash grading/run_test.sh table_sort",
+      "input": "",
+      "output": "[PASS]",
+      "comparison": "included",
+      "timeout": 30,
+      "points": 20
+    },
+    {
+      "name": "Test case 6",
+      "setup": "",
+      "run": "bash grading/run_test.sh form_add",
+      "input": "",
+      "output": "[PASS]",
+      "comparison": "included",
+      "timeout": 30,
+      "points": 25
+    }
+  ]
+}
