@@ -4,8 +4,266 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quản lý Sản phẩm</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #8d8d8db4;
+      color: #333333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      gap: 15px; 
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    h1 {
+      color: #ffffff59; 
+      text-align: center;
+      margin: 0 0 10px 0;
+      -webkit-text-stroke: 1px rgb(228, 228, 228); 
+      filter: drop-shadow(0 0 10px rgb(5, 5, 5)) drop-shadow(0 0 20px rgb(27, 27, 27));
+      width: 100%;
+      transition: transform 0.6s ease;
+    }
+
+    .input-wrapper, .btn-group {
+      width: 100%;
+      max-width: 500px; 
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #8d8d8d; 
+      border-radius: 18px;
+      font-size: 16px;
+      box-sizing: border-box;
+      outline: none; 
+      transition: border-color 0.4s ease;
+      background-color: #ffffff;
+    }
+
+    input:hover, button:hover {
+      border-color: #95d1f8;
+    }
+
+    h1:hover {
+      transform: scale(1.15);
+    }
+    .table-wrapper:hover {
+      border-color: #a6dbff;
+      transform: scale(1.05);
+    }
+
+    input:focus, button:focus {
+      border-color: #e24a4a;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #8d8d8d; 
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      background-color: #ffffff;
+      transition: background-color 0.3s ease, transform 0.1s ease;
+      cursor: pointer;
+    }
+
+    button:active {
+      transform: scale(0.95);
+    }
+
+    .table-wrapper {
+      display: flex;
+      width: 100%;
+      max-width: 800px; 
+      background-color: #ffffff;
+      border: 2px solid #8d8d8d; 
+      border-radius: 18px;
+      overflow: hidden; 
+      margin-top: 15px;
+      transition: background-color 0.3s ease, transform 0.5s ease;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #8d8d8d;
+    }
+
+    .text-right {
+      text-align: right;
+    }
+  </style>
 </head>
 <body>
 
+  <h1>Quản lý Sản phẩm</h1>
+
+  <div class="input-wrapper">
+    <label for="input-name">Tên sản phẩm *</label>
+    <input type="text" id="input-name" placeholder="Nhập tên...">
+  </div>
+
+  <div class="input-wrapper">
+    <label for="input-category">Danh mục</label>
+    <input type="text" id="input-category" placeholder="Nhập danh mục...">
+  </div>
+
+  <div class="input-wrapper">
+    <label for="input-price">Đơn giá (VNĐ) *</label>
+    <input type="number" id="input-price" placeholder="Ví dụ: 150000">
+  </div>
+
+  <div class="input-wrapper">
+    <label for="input-quantity">Số lượng *</label>
+    <input type="number" id="input-quantity" placeholder="Ví dụ: 10">
+  </div>
+
+  <div class="btn-group">
+    <button id="btn-add">Thêm sản phẩm</button>
+  </div>
+
+  <div class="table-wrapper">
+    <table id="product-table">
+      <thead>
+        <tr>
+          <th>STT</th>
+          <th id="th-name">Tên sản phẩm <span id="sort-icon"></span></th>
+          <th>Danh mục</th>
+          <th class="text-right">Đơn giá</th>
+          <th class="text-right">Số lượng</th>
+        </tr>
+      </thead>
+      <tbody id="table-body">
+        </tbody>
+    </table>
+  </div>
+
+  <script>
+    let products = []; 
+    let currentSortDir = ''; 
+
+    const tableBody = document.querySelector('#product-table tbody');
+    const thName = document.getElementById('th-name');
+    const sortIcon = document.getElementById('sort-icon');
+    
+    const inputName = document.getElementById('input-name');
+    const inputCategory = document.getElementById('input-category');
+    const inputPrice = document.getElementById('input-price');
+    const inputQuantity = document.getElementById('input-quantity');
+    const btnAdd = document.getElementById('btn-add');
+
+    function loadProducts() {
+    const xhr = new XMLHttpRequest();
+
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4) {
+        if (xhr.status === 200) {
+          try {
+            products = JSON.parse(xhr.responseText);
+          } catch (e) {
+            products = [];
+          }
+          renderTable();
+        }
+      }
+    };
+
+    xhr.open('GET', 'products.json');
+    xhr.send();
+  }
+
+    function renderTable() {
+      tableBody.innerHTML = '';
+
+      products.forEach((product, index) => {
+        const tr = document.createElement('tr');
+        
+        const formattedPrice = Number(product.price).toLocaleString('vi-VN') + ' đ';
+
+        tr.innerHTML = `
+          <td>${index + 1}</td>
+          <td>${product.name}</td>
+          <td>${product.category || '---'}</td>
+          <td class="text-right">${formattedPrice}</td>
+          <td class="text-right">${product.quantity}</td>
+        `;
+        tableBody.appendChild(tr);
+      });
+    }
+
+    function handleSortByName() {
+      if (currentSortDir === '' || currentSortDir === 'desc') {
+        products.sort((a, b) => a.name.localeCompare(b.name));
+        currentSortDir = 'asc';
+        sortIcon.textContent = '▲';
+      } else {
+        products.sort((a, b) => b.name.localeCompare(a.name));
+        currentSortDir = 'desc';
+        sortIcon.textContent = '▼';
+      }
+      renderTable();
+    }
+
+    function handleAddProduct() {
+      const name = inputName.value.trim();
+      const category = inputCategory.value.trim();
+      const price = parseFloat(inputPrice.value);
+      const quantity = parseInt(inputQuantity.value);
+
+      if (name.length < 3 || isNaN(price) || price <= 0 || isNaN(quantity) || quantity < 1) {
+        return; 
+      }
+
+      const newProduct = {
+        id: Date.now(), 
+        name: name,
+        category: category,
+        price: price,
+        quantity: quantity
+      };
+
+      products.push(newProduct);
+
+      if (currentSortDir === 'asc') {
+        products.sort((a, b) => a.name.localeCompare(b.name));
+      } else if (currentSortDir === 'desc') {
+        products.sort((a, b) => b.name.localeCompare(a.name));
+      }
+
+      renderTable();
+
+      inputName.value = '';
+      inputCategory.value = '';
+      inputPrice.value = '';
+      inputQuantity.value = '';
+      if (typeof inputName.focus === 'function') {
+        inputName.focus();
+      }
+    }
+
+    thName.addEventListener('click', handleSortByName);
+    btnAdd.addEventListener('click', handleAddProduct);
+
+    loadProducts();
+  </script>
 </body>
 </html>
